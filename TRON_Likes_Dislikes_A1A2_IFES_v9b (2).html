@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" oncontextmenu="return false">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Secure English TRON · Likes & Dislikes (A1–A2)</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;height:100%;overflow:hidden}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:13px;color:#111;user-select:none;-webkit-user-select:none;background:linear-gradient(135deg,#FF7E5F,#FEB47B,#7ED957,#00E09E,#8AE6CF);background-size:400% 400%;animation:bg 18s ease infinite}
+  @keyframes bg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  .wrap{width:100%;height:100%;display:grid;place-items:center;padding:16px}
+  .card{width:min(900px,96vw);min-height:min(92vh,720px);backdrop-filter:blur(12px) saturate(1.2);background:rgba(255,255,255,.78);border-radius:20px;border:1px solid rgba(255,255,255,.45);box-shadow:0 12px 40px rgba(0,0,0,.15);display:flex;flex-direction:column;overflow:hidden}
+  .header{padding:14px 16px;background:linear-gradient(135deg,rgba(255,126,95,.9),rgba(0,224,158,.9));color:#052b1c;display:flex;gap:10px;align-items:center}
+  .logo{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.9);display:grid;place-items:center;font-weight:800}
+  .title{font-weight:800}
+  .sub{margin-left:auto;opacity:.8;font-weight:700}
+  .body{padding:16px;display:grid;grid-template-rows:auto 1fr auto;gap:12px;height:100%}
+  .start,.question,.result{display:none}
+  .active{display:block}
+  .btn{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:14px;border:0;cursor:pointer;background:linear-gradient(135deg,#ff9f68,#00e09e);font-weight:800;box-shadow:0 10px 20px rgba(0,0,0,.12)}
+  .meta{display:flex;gap:8px;flex-wrap:wrap;background:rgba(0,0,0,.05);padding:8px 10px;border-radius:12px}
+  .chip{background:rgba(0,0,0,.06);padding:6px 10px;border-radius:999px;font-weight:700}
+  .bar{height:10px;background:rgba(0,0,0,.08);border-radius:999px;overflow:hidden}
+  .bar>div{height:100%;width:0;background:linear-gradient(135deg,#ffb56b,#7ed957);transition:width .3s ease}
+  .q-stem{background:rgba(255,255,255,.95);border:2px dashed rgba(0,0,0,.06);border-radius:14px;padding:12px;font-weight:800}
+  .choices{display:grid;gap:8px;margin-top:10px}
+  .choice{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:10px;display:flex;gap:8px;cursor:pointer}
+  .choice.correct{border-color:#1abc9c;box-shadow:0 0 0 3px rgba(26,188,156,.18) inset}
+  .choice.wrong{border-color:#e74c3c;box-shadow:0 0 0 3px rgba(231,76,60,.16) inset}
+  .footer{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .timer{font-weight:900;background:rgba(0,0,0,.06);padding:8px 10px;border-radius:12px}
+  .statusbox{flex:1 1 100%;background:rgba(0,0,0,.06);padding:8px 10px;border-radius:12px;font-weight:900}
+  .instant{display:none;margin-top:10px;padding:10px;border-radius:12px;border:1px solid rgba(0,0,0,.08);background:#fff}
+  .instant.ok{display:block;border-color:#1abc9c;box-shadow:0 0 0 3px rgba(26,188,156,.12) inset}
+  .instant.bad{display:block;border-color:#e74c3c;box-shadow:0 0 0 3px rgba(231,76,60,.12) inset}
+  .match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .match-col{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:10px}
+  .match-item{padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,.08);margin:6px 0;display:flex;gap:8px;cursor:pointer}
+  .match-item.active{outline:3px solid rgba(0,224,158,.4)}
+  .order-bank,.order-build{display:flex;flex-wrap:wrap;gap:8px;padding:10px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;min-height:48px}
+  .token{padding:8px 10px;background:#f7f7f7;border:1px solid rgba(0,0,0,.1);border-radius:10px;cursor:pointer}
+  .token.used{opacity:.5;pointer-events:none}
+  .overlay{position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.9);color:#fff;z-index:99999;text-align:center;padding:18px}
+  .overlay.active{display:grid}
+  @media(max-width:520px){.match-wrap{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <div class="header">
+      <div class="logo">TR</div>
+      <div class="title">Secure English TRON · Likes & Dislikes (A1–A2)</div>
+      <div class="sub">IFES Style · 25/50 · 3 min/question · No password</div>
+    </div>
+    <div class="body">
+      <section class="start active" id="screen-start">
+        <div class="big" style="font-size:28px;font-weight:900;">Focus: love / like / don’t like / doesn’t like / hate</div>
+        <p>Forms: <b>affirmative, negative, interrogative</b> with <b>I / you / we / he / she / it</b> and <b>proper nouns</b> (e.g., <i>Sarah, the teacher</i>).</p>
+        <div class="meta"><span class="chip">Random 25</span><span class="chip">Anti‑cheat</span><span class="chip">3:00 per question</span></div>
+        <button id="btn-start" class="btn">▶ Start</button>
+      </section>
+
+      <section class="question" id="screen-question">
+        <div class="meta"><div class="chip" id="chip-index">Q 1/25</div><div class="chip" id="chip-score">Score 0</div><div class="chip" id="chip-kind">—</div></div>
+        <div class="bar"><div id="progress"></div></div>
+        <div class="q-stem" id="q-stem">Loading…</div>
+        <div id="q-area" style="margin-top:10px;"></div>
+        <div class="instant" id="instant"></div>
+        <div class="footer">
+          <div class="statusbox" id="statusbox">✓ Correct: 0 · ✗ Incorrect: 0</div>
+          <div class="timer" id="timer">03:00</div>
+          <button class="btn" id="btn-check" style="display:none;">Check ✓</button>
+          <button class="btn" id="btn-next" disabled>Next ▷</button>
+        </div>
+      </section>
+
+      <section class="result" id="screen-result">
+        <div class="big" style="font-size:26px;font-weight:900;">Results</div>
+        <div class="meta"><span class="chip" id="r-score">Score: 0 / 25</span><span class="chip" id="r-pct">0%</span><span class="chip" id="r-time">—</span></div>
+        <div id="r-feedback" class="q-stem">Great effort! Keep practicing preference verbs.</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;"><button class="btn" id="btn-restart">↻ Restart</button><button class="btn" onclick="location.reload()">Exit</button></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"><div><h2>⚠️ Security Alert</h2><p id="overlay-msg">Focus lost. The quiz restarted for protection.</p></div></div>
+
+<script>
+// Helpers
+const $ = q => document.querySelector(q);
+const $$ = q => Array.from(document.querySelectorAll(q));
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
+function el(t,attrs={},html=''){const n=document.createElement(t);for(const [k,v] of Object.entries(attrs)) n.setAttribute(k,v); if(html) n.innerHTML=html; return n;}
+function formatTime(s){const m=String(Math.floor(s/60)).padStart(2,'0'), ss=String(s%60).padStart(2,'0');return m+':'+ss;}
+
+// Anti‑cheat (armed after start to avoid false positives on load)
+let ARMED=false;
+function overlayMsg(txt){const o=$('#overlay');$('#overlay-msg').textContent=txt;o.classList.add('active');setTimeout(()=>o.classList.remove('active'),1400);}
+function securityReset(msg){ if(!ARMED) return; overlayMsg(msg); clearInterval(STATE.timerId); showStart(); }
+
+document.addEventListener('copy',e=>e.preventDefault());
+document.addEventListener('cut',e=>e.preventDefault());
+document.addEventListener('paste',e=>e.preventDefault());
+document.addEventListener('contextmenu',e=>e.preventDefault(),{capture:true});
+window.addEventListener('keydown',e=>{const k=(e.key||'').toLowerCase(); if(k==='f12'||k==='printscreen'||e.ctrlKey||e.metaKey){e.preventDefault();e.stopPropagation();securityReset('Protected keys detected.');}},true);
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) securityReset('Focus lost.'); });
+window.addEventListener('blur',()=>securityReset('Focus lost.'));
+window.addEventListener('resize',()=>securityReset('Window/Orientation changed.'));
+window.addEventListener('orientationchange',()=>securityReset('Window/Orientation changed.'));
+window.addEventListener('keyup',e=>{ if((e.key||'').toLowerCase()==='printscreen') securityReset('Screenshot attempt detected.'); });
+
+// DOM references
+const sStart=$('#screen-start'), sQ=$('#screen-question'), sR=$('#screen-result');
+const btnStart=$('#btn-start'), btnNext=$('#btn-next'), btnCheck=$('#btn-check'), btnRestart=$('#btn-restart');
+const chipIndex=$('#chip-index'), chipScore=$('#chip-score'), chipKind=$('#chip-kind');
+const progress=$('#progress'), timerEl=$('#timer'), qStem=$('#q-stem'), qArea=$('#q-area'), instant=$('#instant'), statusbox=$('#statusbox');
+const rScore=$('#r-score'), rPct=$('#r-pct'), rTime=$('#r-time');
+
+/* ------------ Bank v9b: 50 items (likes/dislikes; 1st & 3rd person; nouns & pronouns) ------------- */
+const BANK = [
+  // TRUE/FALSE (10)
+  {type:'tf', stem:'Correct or incorrect?<br><b>I like coffee, but I don’t like tea.</b>', opts:['Correct','Incorrect'], ans:0},
+  {type:'tf', stem:'Grammar check:<br><b>She like jazz.</b>', opts:['Correct','Incorrect'], ans:1},
+  {type:'tf', stem:'Is this correct?<br><b>Sarah likes morning classes.</b>', opts:['Correct','Incorrect'], ans:0},
+  {type:'tf', stem:'Is the sentence correct?<br><b>He doesn’t like crowded buses.</b>', opts:['Correct','Incorrect'], ans:0},
+  {type:'tf', stem:'Check this:<br><b>We don’t like long meetings.</b>', opts:['Correct','Incorrect'], ans:0},
+  {type:'tf', stem:'Is this correct English?<br><b>The teacher doesn’t like late arrivals.</b>', opts:['Correct','Incorrect'], ans:0},
+  {type:'tf', stem:'Correct or incorrect?<br><b>He hate exams.</b>', opts:['Correct','Incorrect'], ans:1},
+  {type:'tf', stem:'Is this correct?<br><b>It doesn’t like water.</b> (talking about a robot)', opts:['Correct','Incorrect'], ans:0},
+  {type:'tf', stem:'Is this correct?<br><b>My brother don’t like homework.</b>', opts:['Correct','Incorrect'], ans:1},
+  {type:'tf', stem:'Correct or incorrect?<br><b>She loves reading, but she doesn’t like writing long reports.</b>', opts:['Correct','Incorrect'], ans:0},
+
+  // MCQ (14)
+  {type:'mcq', stem:'Choose the correct option.', opts:['She likes jazz.','She like jazz.','She liking jazz.','She likes to listens jazz.'], ans:0},
+  {type:'mcq', stem:'Pick the correct sentence.', opts:['He doesn’t like spicy food.','He don’t like spicy food.','He no like spicy food.','He not like spicy food.'], ans:0},
+  {type:'mcq', stem:'Select the correct negative form.', opts:['Sarah doesn’t like long lectures.','Sarah don’t like long lectures.','Sarah not like long lectures.','Sarah no like long lectures.'], ans:0},
+  {type:'mcq', stem:'Which is correct?', opts:['The team hates waiting in lines.','The team hate waiting in lines.','The team hates to waiting in lines.','The team hating waiting in lines.'], ans:0},
+  {type:'mcq', stem:'Choose the correct interrogative.', opts:['Does he like pizza?','Do he like pizza?','He does like pizza?','Does like he pizza?'], ans:0},
+  {type:'mcq', stem:'Choose the correct completion: "— ____ she like group work?"', opts:['Does','Do','Is','Did'], ans:0},
+  {type:'mcq', stem:'Pick the correct sentence.', opts:['It loves quiet rooms.','It love quiet rooms.','It loving quiet rooms.','It loves to quiet rooms.'], ans:0},
+  {type:'mcq', stem:'Choose the correct option.', opts:['My brother doesn’t like crowded buses.','My brother don’t like crowded buses.','My brother not like crowded buses.','My brother no like crowded buses.'], ans:0},
+  {type:'mcq', stem:'Which question is correct?', opts:['Does Sarah like this schedule?','Do Sarah like this schedule?','Is Sarah like this schedule?','Sarah does like this schedule?'], ans:0},
+  {type:'mcq', stem:'Select the correct answer: "Does he like chess?"', opts:['Yes, he does.','Yes, he is.','Yes, he like.','Yes, he do.'], ans:0},
+  {type:'mcq', stem:'Complete: "She ____ noisy cafeterias." (negative preference)', opts:['doesn’t like','don’t like','no like','not like'], ans:0},
+  {type:'mcq', stem:'Choose the correct sentence.', opts:['He hates exams, but he likes projects.','He hate exams, but he likes projects.','He hates exams, but he like projects.','He hates exams, and he doesn’t like projects but.'], ans:0},
+  {type:'mcq', stem:'Pick the correct sentence.', opts:['I don’t like long flights.','I doesn’t like long flights.','I no like long flights.','I not like long flights.'], ans:0},
+  {type:'mcq', stem:'Choose the correct interrogative.', opts:['Do we like this plan?','Does we like this plan?','Are we like this plan?','We do like this plan?'], ans:0},
+
+  // CLOZE (6)
+  {type:'cloze', stem:'Complete the question: "____ she like online classes?"', opts:['Does','Do','Is','Did'], ans:0},
+  {type:'cloze', stem:'Complete: "He ____ loud music in the library." (negative)', opts:['doesn’t like','don’t like','no like','not like'], ans:0},
+  {type:'cloze', stem:'Complete: "Sarah ____ sports on weekends." (positive)', opts:['likes','like','doesn’t like','don’t like'], ans:0},
+  {type:'cloze', stem:'Complete the answer: "Does he like tea?" — "Yes, ____." ', opts:['he does.','he is.','he like.','he do.'], ans:0},
+  {type:'cloze', stem:'Complete: "My brother ____ spicy food, right?" (negative tag context)', opts:['doesn’t like','don’t like','not like','no like'], ans:0},
+  {type:'cloze', stem:'Complete: "I ____ study groups." (positive)', opts:['like','likes','doesn’t like','don’t like'], ans:0},
+
+  // CONTEXT (10)
+  {type:'context', stem:'"Sarah doesn’t like long lectures; she loves short workshops." Which is TRUE?', opts:['Sarah prefers short workshops.','Sarah loves long lectures.','Sarah doesn’t like workshops.','Sarah hates short workshops.'], ans:0},
+  {type:'context', stem:'"Does he like coffee?" — "No, he doesn’t." Which is TRUE?', opts:['He likes coffee.','He doesn’t like coffee.','He loves coffee.','He hates answering.'], ans:1},
+  {type:'context', stem:'"We love Saturday classes, but the teacher doesn’t like Monday tests." What is correct?', opts:['The teacher doesn’t like Monday tests.','The teacher loves Monday tests.','We don’t like Saturday classes.','We hate Saturday classes.'], ans:0},
+  {type:'context', stem:'"Does Sarah like this plan?" — "Yes, she does." Choose the correct statement.', opts:['Sarah doesn’t like the plan.','Sarah likes the plan.','Sarah hates the plan.','Sarah do like the plan.'], ans:1},
+  {type:'context', stem:'"He hates noisy streets, but he likes quiet parks." Which is TRUE?', opts:['He likes noisy streets.','He hates quiet parks.','He likes quiet parks.','He doesn’t like quiet parks.'], ans:2},
+  {type:'context', stem:'"I like studying at night, but Sarah doesn’t like waking up early." Which is TRUE?', opts:['Sarah dislikes waking up early.','Sarah hates studying at night.','I don’t like studying.','Sarah loves waking up early.'], ans:0},
+  {type:'context', stem:'"Does the team like group work?" — "Sometimes, but it doesn’t like long meetings." Which is TRUE?', opts:['The team hates all meetings.','The team never works in groups.','The team dislikes long meetings.','The team loves long meetings.'], ans:2},
+  {type:'context', stem:'"We don’t like cold classrooms; Sarah loves warm rooms." Which is TRUE?', opts:['We like cold classrooms.','Sarah prefers warm rooms.','Sarah hates warm rooms.','We love cold classrooms.'], ans:1},
+  {type:'context', stem:'"Does he like travelling?" — "Yes, he does, but he doesn’t like long flights." Which is TRUE?', opts:['He dislikes travelling.','He dislikes long flights.','He loves long flights.','He doesn’t like short trips.'], ans:1},
+  {type:'context', stem:'"The teacher hates waiting; she likes quick service." Which is TRUE?', opts:['She dislikes waiting.','She loves waiting.','She hates quick service.','She doesn’t like quick service.'], ans:0},
+
+  // MATCH (4) — deranged on render
+  {type:'match', stem:'Match each question with the most suitable short answer.', pairs:[
+    ['Does he like coffee?','Yes, he does.'],
+    ['Does she like tea?','No, she doesn’t.'],
+    ['Do we like this plan?','Yes, we do.'],
+    ['Does Sarah hate exams?','Yes, she does.']
+  ]},
+  {type:'match', stem:'Match each question with the best short answer.', pairs:[
+    ['Does the teacher like group work?','Sometimes, but she doesn’t like long meetings.'],
+    ['Do you like spicy food?','No, I don’t.'],
+    ['Does Sarah like online classes?','Yes, she does.'],
+    ['Does he hate noisy buses?','Yes, he does.']
+  ]},
+  {type:'match', stem:'Match the statement with its implication (inference).', pairs:[
+    ['He doesn’t like loud music.','He avoids loud concerts.'],
+    ['She loves quiet parks.','She chooses quiet places.'],
+    ['Sarah hates cold rooms.','She brings a jacket or leaves.'],
+    ['My brother likes fresh coffee.','He visits the café every morning.']
+  ]},
+  {type:'match', stem:'Match the sentence with its category.', pairs:[
+    ['Does she like pizza?','interrogative (3rd person).'],
+    ['He doesn’t like pizza.','negative (3rd person).'],
+    ['Sarah likes pizza.','affirmative (3rd person noun).'],
+    ['I like pizza.','affirmative (1st person).']
+  ]},
+
+  // ORDER (6) — Subject + preference verb + extra verb + complement
+  {type:'order', stem:'Arrange to form a sentence (affirmative).',    fragments:['She','likes','reading','short','stories','.']},
+  {type:'order', stem:'Arrange to form a sentence (negative).',       fragments:['He','doesn’t','like','waking','up','early','.']},
+  {type:'order', stem:'Arrange to form a question (interrogative).',  fragments:['Does','Sarah','like','studying','at','night','?']},
+  {type:'order', stem:'Arrange to form a sentence (affirmative).',    fragments:['I','love','playing','soccer','on','weekends','.']},
+  {type:'order', stem:'Arrange to form a sentence (negative).',       fragments:['We','don’t','like','taking','long','exams','.']},
+  {type:'order', stem:'Arrange to form a question (interrogative).',  fragments:['Does','the','teacher','like','checking','homework','at','night','?']}
+];
+
+const STATE={order:[],idx:0,score:0,timerId:null,correct:0,wrong:0,started:0,spent:0};
+
+function showStart(){
+  clearInterval(STATE.timerId);
+  sR.classList.remove('active'); sQ.classList.remove('active'); sStart.classList.add('active');
+  STATE.idx=0;STATE.score=0;STATE.correct=0;STATE.wrong=0;STATE.spent=0;ARMED=false;
+  btnNext.disabled=true; btnCheck.style.display='none'; timerEl.textContent='03:00'; chipScore.textContent='Score 0'; progress.style.width='0%';
+  instant.style.display='none'; instant.classList.remove('ok','bad'); instant.textContent=''; statusbox.textContent='✓ Correct: 0 · ✗ Incorrect: 0';
+}
+
+function showQ(){ sStart.classList.remove('active'); sR.classList.remove('active'); sQ.classList.add('active'); }
+
+function showR(){ sStart.classList.remove('active'); sQ.classList.remove('active'); sR.classList.add('active'); }
+
+function startQuiz(){
+  const idxs=[...BANK.keys()]; shuffle(idxs); STATE.order=idxs.slice(0,25);
+  STATE.idx=0; STATE.score=0; STATE.started=Date.now();
+  showQ(); render();
+  // arm anti-cheat after a short delay to avoid false positives
+  setTimeout(()=>{ARMED=true;}, 800);
+}
+
+function render(){
+  btnNext.disabled=true; btnCheck.style.display='none'; instant.classList.remove('ok','bad'); instant.style.display='none'; instant.textContent='';
+  const qi=STATE.order[STATE.idx], q=BANK[qi];
+  chipIndex.textContent=`Q ${STATE.idx+1}/25`; chipScore.textContent=`Score ${STATE.score}`;
+  const kindMap={mcq:'Multiple choice',tf:'True / False',cloze:'Complete',context:'Contextual',match:'Matching',order:'Ordering'};
+  chipKind.textContent=kindMap[q.type]||'Question'; qStem.innerHTML=q.stem; qArea.innerHTML='';
+  progress.style.width=((STATE.idx/25)*100)+'%';
+  clearInterval(STATE.timerId); let remain=180; timerEl.textContent=formatTime(remain);
+  STATE.timerId=setInterval(()=>{remain--; if(remain<=0){clearInterval(STATE.timerId); nextQ();} else {timerEl.textContent=formatTime(remain);}},1000);
+  if(['mcq','tf','cloze','context'].includes(q.type)) renderChoices(q);
+  else if(q.type==='match') renderMatch(q);
+  else if(q.type==='order') renderOrder(q);
+}
+
+function renderChoices(q){
+  const box=el('div',{class:'choices'}); const shuffled=q.opts.map((t,i)=>({t,i})); shuffle(shuffled);
+  shuffled.forEach(({t,i},pos)=>{const label=String.fromCharCode(65+pos); const b=el('button',{class:'choice','data-i':i},`<b>${label}</b> <span>${t}</span>`);
+    b.addEventListener('click',()=>selectChoice(b,i,q.ans)); box.appendChild(b);}); qArea.appendChild(box);
+}
+function selectChoice(node,chosen,correct){
+  if($$('.choice.correct,.choice.wrong').length) return; const nodes=$$('.choice'); nodes.forEach(n=>n.disabled=true);
+  const ok=(chosen===correct); if(ok){node.classList.add('correct');STATE.score++;STATE.correct++;chipScore.textContent=`Score ${STATE.score}`;instant.textContent='✅ Correct';instant.classList.add('ok');} 
+  else {node.classList.add('wrong'); nodes.forEach(n=>{if(parseInt(n.getAttribute('data-i'))===correct)n.classList.add('correct')}); STATE.wrong++; instant.textContent='❌ Incorrect'; instant.classList.add('bad');}
+  instant.style.display='block'; statusbox.textContent=`✓ Correct: ${STATE.correct} · ✗ Incorrect: ${STATE.wrong}`; btnNext.disabled=false;
+}
+
+function renderMatch(q){
+  btnCheck.style.display='inline-flex';
+  const left=q.pairs.map(p=>p[0]), right=q.pairs.map(p=>p[1]); 
+  let shuffledRight=shuffle([...right]); const correctMap=new Map(q.pairs);
+  // derangement: avoid same-index alignment
+  let safety=0; while(safety<40){let aligned=false; for(let i=0;i<left.length;i++){ if(correctMap.get(left[i])===shuffledRight[i]){aligned=true;break;} } if(!aligned)break; shuffledRight=shuffle([...right]); safety++;}
+  const wrap=el('div',{class:'match-wrap'}), colL=el('div',{class:'match-col'}), colR=el('div',{class:'match-col'});
+  const made={}, taken=new Set(); let selected=null;
+  left.forEach((txt,i)=>{const it=el('div',{class:'match-item','data-left':txt},`<b>${String.fromCharCode(65+i)}</b> <span>${txt}</span>`);
+    it.addEventListener('click',()=>{$$('.match-item').forEach(x=>x.classList.remove('active')); it.classList.add('active'); selected=txt;}); colL.appendChild(it);});
+  shuffledRight.forEach((txt,i)=>{const it=el('div',{class:'match-item','data-right':txt},`<b>${i+1}</b> <span>${txt}</span>`);
+    it.addEventListener('click',()=>{if(!selected||taken.has(txt))return; made[selected]=txt; taken.add(txt); const L=$(`.match-item[data-left="${CSS.escape(selected)}"]`); L.innerHTML=`<b>✓</b> <span>${selected}</span><span style="margin-left:auto;opacity:.7">→ ${txt}</span>`; L.classList.add('active'); selected=null; if(Object.keys(made).length===left.length) btnCheck.disabled=false;}); colR.appendChild(it);});
+  wrap.appendChild(colL); wrap.appendChild(colR); qArea.appendChild(wrap);
+  btnCheck.disabled=true; btnCheck.onclick=()=>{ let all=true; left.forEach(L=>{const ok = correctMap.get(L)===made[L]; const node=$(`.match-item[data-left="${CSS.escape(L)}"]`); if(ok) node.classList.add('correct'); else {node.classList.add('wrong'); all=false;}});
+    if(all){STATE.score++;STATE.correct++;chipScore.textContent=`Score ${STATE.score}`;instant.textContent='✅ Correct';instant.classList.add('ok');} else {STATE.wrong++; instant.textContent='❌ Incorrect'; instant.classList.add('bad');}
+    instant.style.display='block'; statusbox.textContent=`✓ Correct: ${STATE.correct} · ✗ Incorrect: ${STATE.wrong}`; btnNext.disabled=false; btnCheck.style.display='none';};
+}
+
+function renderOrder(q){
+  btnCheck.style.display='inline-flex';
+  const correct=q.fragments.slice(), shuffled=shuffle(q.fragments.slice());
+  const bank=el('div',{class:'order-bank'}), build=el('div',{class:'order-build'});
+  shuffled.forEach(tok=>{const t=el('button',{class:'token'},tok); t.addEventListener('click',()=>{if(t.classList.contains('used'))return; const c=el('button',{class:'token'},tok); c.addEventListener('click',()=>{build.removeChild(c); t.classList.remove('used'); btnCheck.disabled=(build.children.length!==correct.length);}); build.appendChild(c); t.classList.add('used'); btnCheck.disabled=(build.children.length!==correct.length);}); bank.appendChild(t);});
+  qArea.appendChild(bank); qArea.appendChild(build);
+  btnCheck.disabled=true; btnCheck.onclick=()=>{
+    const ansTokens=Array.from(build.children).map(n=>n.textContent);
+    const corrTokens=correct.slice();
+    const norm=s=>s.replace(/\s*([.,!?;:])\s*/g,'$1').replace(/\s+/g,' ').trim();
+    const aStr=norm(ansTokens.join(' ')), cStr=norm(corrTokens.join(' '));
+    const cNoP=norm(cStr.replace(/[.,!?;:]+$/,''));
+    const expand=s=>s.replace(/\bdo not\b/gi,"don't").replace(/\bdoes not\b/gi,"doesn't");
+    const ok=(aStr===cStr)||(aStr===cNoP)||(expand(aStr)===expand(cStr))||(expand(aStr)===expand(cNoP));
+    Array.from(build.children).forEach(n=>n.classList.add(ok?'correct':'wrong'));
+    if(ok){STATE.score++;STATE.correct++;chipScore.textContent=`Score ${STATE.score}`;instant.textContent='✅ Correct';instant.classList.add('ok');}
+    else {STATE.wrong++; instant.textContent='❌ Incorrect. Tip: Subject + preference verb + extra verb + complement.'; instant.classList.add('bad');}
+    instant.style.display='block'; statusbox.textContent=`✓ Correct: ${STATE.correct} · ✗ Incorrect: ${STATE.wrong}`; btnNext.disabled=false; btnCheck.style.display='none';
+  };
+}
+
+function nextQ(){ clearInterval(STATE.timerId); STATE.idx++; if(STATE.idx>=25){ STATE.spent=Math.round((Date.now()-STATE.started)/1000); finalize(); } else { render(); } }
+function finalize(){ showR(); const pct=Math.round((STATE.score/25)*100); rScore.textContent=`Score: ${STATE.score} / 25`; rPct.textContent=`${pct}%`; rTime.textContent=`Time: ${Math.floor(STATE.spent/60)}m ${STATE.spent%60}s`; }
+
+// Wire up after DOM is ready
+document.addEventListener('DOMContentLoaded',()=>{
+  showStart();
+  btnStart.addEventListener('click',startQuiz);
+  btnNext.addEventListener('click',nextQ);
+  btnRestart.addEventListener('click',showStart);
+});
+</script>
+</body>
+</html>
